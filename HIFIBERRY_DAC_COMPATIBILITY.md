@@ -31,8 +31,8 @@ HiFiBerry DACs use I2S (Inter-IC Sound) for audio, which requires these specific
 
 | GPIO | Physical Pin | Notes |
 |------|--------------|-------|
-| **GPIO 12** | Pin 32 | Hardware PWM ⭐ Best performance |
-| **GPIO 13** | Pin 33 | Hardware PWM ⭐ Best performance |
+| **GPIO 12** | Pin 32 | Hardware PWM ⭐ **May be used by fan control!** |
+| **GPIO 13** | Pin 33 | Hardware PWM ⭐ Best if GPIO 12 is taken |
 
 ### **Good Alternative Pins:**
 
@@ -68,6 +68,21 @@ dtoverlay=gpio-ir-tx,gpio_pin=12
 
 mount -o remount,ro /boot
 reboot
+```
+
+## 🔄 **Common Pin Conflicts**
+
+### Fan Control
+If you're using the [HiFiBerry fan control plugin](https://github.com/Leoname/hifiberry_fan_control), it typically uses:
+- **GPIO 12** for PWM fan control
+
+In this case, use **GPIO 17** (default) or **GPIO 13** (hardware PWM) for IR instead.
+
+### Summary of Pin Usage
+```
+GPIO 12  → Fan PWM (if fan control installed)
+GPIO 17  → IR Transmitter (recommended default)
+GPIO 18-21 → HiFiBerry DAC I2S (do not use!)
 ```
 
 ## 🧪 **Testing Compatibility**

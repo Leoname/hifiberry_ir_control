@@ -60,16 +60,19 @@ If you're using a HiFiBerry DAC (DAC+, DAC2, etc.), **DO NOT use GPIO 18, 19, 20
 - Jumper wires
 
 **Alternative GPIO Pins:**
-- GPIO 17 (Pin 11) - **recommended for HiFiBerry DACs** ⭐
-- GPIO 12 (Pin 32) - hardware PWM capable
-- GPIO 13 (Pin 33) - hardware PWM capable
+- GPIO 17 (Pin 11) - **recommended for HiFiBerry DACs** ⭐ **DEFAULT**
+- GPIO 13 (Pin 33) - hardware PWM capable (if GPIO 12 not used by fan)
 - GPIO 22 (Pin 15)
 - GPIO 23 (Pin 16)
 - GPIO 24 (Pin 18)
 - GPIO 25 (Pin 22)
+- GPIO 27 (Pin 13)
 
 **⚠️ WARNING - Do NOT use with HiFiBerry DACs:**
 - GPIO 18, 19, 20, 21 - These are used by I2S audio and will cause conflicts/reboots!
+
+**⚠️ NOTE - May already be in use:**
+- GPIO 12 - Often used by fan control plugins. Use GPIO 17 or 13 instead.
 
 ## Installation
 
