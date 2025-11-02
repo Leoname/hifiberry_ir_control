@@ -12,7 +12,7 @@ BEOCREATE_EXT_DIR="/opt/beocreate/beo-extensions/ir-remote-control"
 # Check if running as root
 if [ "$EUID" -ne 0 ]; then 
     echo "Error: This script must be run as root"
-    echo "Please run: sudo $0"
+    echo "Please run as root user"
     exit 1
 fi
 

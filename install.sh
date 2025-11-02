@@ -15,7 +15,7 @@ GPIO_PIN=17  # Safe for HiFiBerry DACs (GPIO 18-21 are used by I2S audio!)
 # Check if running as root
 if [ "$EUID" -ne 0 ]; then 
     echo "Error: This script must be run as root"
-    echo "Please run: sudo $0"
+    echo "Please run as root user"
     exit 1
 fi
 
