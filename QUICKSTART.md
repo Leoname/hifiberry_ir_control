@@ -6,24 +6,32 @@
 ✅ HiFiBerry OS running on Raspberry Pi  
 ✅ SSH access to your HiFiBerry device  
 
-## Installation (3 Steps)
+## Installation (2 Easy Steps)
 
-### 1. Copy Files to HiFiBerry OS
+### 1. Clone and Install
 
-From your Mac:
-```bash
-scp -r /Users/emanuelott/codebase/hifiberry_plugin2/* root@<hifiberry-ip>:/tmp/ir-remote/
-```
-
-### 2. Install the Plugin
-
-SSH into HiFiBerry OS and run:
 ```bash
 ssh root@<hifiberry-ip>
-cd /tmp/ir-remote
+cd /tmp
+git clone https://github.com/Leoname/hifiberry_ir_control.git
+cd hifiberry_ir_control
 chmod +x install.sh
 ./install.sh
 ```
+
+**Or use the one-liner:**
+```bash
+ssh root@<hifiberry-ip> "cd /tmp && git clone https://github.com/Leoname/hifiberry_ir_control.git && cd hifiberry_ir_control && chmod +x install.sh && ./install.sh"
+```
+
+### 2. Reboot (if first-time IR setup)
+
+If the installer configured IR for the first time, reboot:
+```bash
+reboot
+```
+
+Then run `./install.sh` again to complete the installation.
 
 ### 3. Access Web Interface
 

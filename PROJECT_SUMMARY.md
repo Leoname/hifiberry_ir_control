@@ -163,23 +163,26 @@ When installed on HiFiBerry OS:
 - **SETUP_INSTRUCTIONS.md** - Detailed setup process
 - **PROJECT_SUMMARY.md** - This file
 
-## Next Steps for User
+## Installation from GitHub
 
-1. **Copy files to HiFiBerry OS**
-   ```bash
-   scp -r * root@<hifiberry-ip>:/tmp/ir-remote/
-   ```
-
-2. **Run installer**
+### Quick Install
    ```bash
    ssh root@<hifiberry-ip>
-   cd /tmp/ir-remote
+   cd /tmp
+   git clone https://github.com/Leoname/hifiberry_ir_control.git
+   cd hifiberry_ir_control
+   chmod +x install.sh
    ./install.sh
    ```
 
-3. **Access web interface**
-   - Open HiFiBerry OS web UI
-   - Navigate to IR Remote Control extension
+### One-Liner
+   ```bash
+   ssh root@<hifiberry-ip> "cd /tmp && git clone https://github.com/Leoname/hifiberry_ir_control.git && cd hifiberry_ir_control && chmod +x install.sh && ./install.sh"
+   ```
+
+### After Installation
+   - Open HiFiBerry OS web UI: `http://<hifiberry-ip>`
+   - Navigate to: Extensions → IR Remote Control
    - Start controlling your receiver!
 
 ## audiocontrol2 Integration (NEW!)

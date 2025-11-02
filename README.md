@@ -3,6 +3,16 @@
 A complete infrared remote control plugin for HiFiBerry OS that integrates seamlessly with the Beocreate web interface. Control your audio receiver directly from your HiFiBerry OS device!
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Platform](https://img.shields.io/badge/platform-HiFiBerry%20OS-red.svg)
+![GPIO](https://img.shields.io/badge/GPIO-17%20(safe%20for%20DACs)-green.svg)
+
+## Quick Install
+
+```bash
+ssh root@<hifiberry-ip> "cd /tmp && git clone https://github.com/Leoname/hifiberry_ir_control.git && cd hifiberry_ir_control && chmod +x install.sh && ./install.sh"
+```
+
+Replace `<hifiberry-ip>` with your device's IP address.
 
 ## Features
 
@@ -76,19 +86,39 @@ If you're using a HiFiBerry DAC (DAC+, DAC2, etc.), **DO NOT use GPIO 18, 19, 20
 
 ## Installation
 
-### Quick Install
-
-1. **Clone or download this repository to your HiFiBerry OS device:**
+### Method 1: Install from GitHub (Recommended)
 
 ```bash
-# On HiFiBerry OS
+# SSH into your HiFiBerry OS
+ssh root@<hifiberry-ip>
+
+# Clone the repository
 cd /tmp
-# Copy files from your computer or clone from repository
+git clone https://github.com/Leoname/hifiberry_ir_control.git
+cd hifiberry_ir_control
+
+# Run the installer
+chmod +x install.sh
+./install.sh
 ```
 
-2. **Run the installation script:**
+### Method 2: Quick One-Liner Install
 
 ```bash
+ssh root@<hifiberry-ip> "cd /tmp && git clone https://github.com/Leoname/hifiberry_ir_control.git && cd hifiberry_ir_control && chmod +x install.sh && ./install.sh"
+```
+
+### Method 3: Manual File Transfer
+
+If git is not available:
+
+```bash
+# On your computer
+scp -r /path/to/hifiberry_ir_control root@<hifiberry-ip>:/tmp/
+
+# SSH in and install
+ssh root@<hifiberry-ip>
+cd /tmp/hifiberry_ir_control
 chmod +x install.sh
 ./install.sh
 ```
