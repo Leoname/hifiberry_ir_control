@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.pyc
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+
+# OS
+.DS_Store
+Thumbs.db
+*.db
+
+# Runtime files (created during operation)
+status.json
+*.log
+*.pid
+
+# Backup files
+*.backup
+*.bak
+*.orig
+
+# Test and temporary files
+test_output.txt
+captured_codes.txt
+*.tmp
+tmp/
+
+# Configuration backups
+/boot/config.txt.backup
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<div class="ir-remote-control-container">
+    <!-- Status Section -->
+    <div class="status-section">
+        <h3>Receiver Status</h3>
+        <div class="status-grid">
+            <div class="status-item">
+                <span class="status-label">Last Command:</span>
+                <span id="last-command" class="status-value">None</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Status:</span>
+                <span id="command-status" class="status-value">Ready</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Power Control -->
+    <div class="control-section">
+        <h3>Power</h3>
+        <div class="button-row">
+            <button class="ir-button power-button" data-command="power">
+                <span class="button-icon">⏻</span>
+                <span class="button-label">Power</span>
+            </button>
+            <button class="ir-button" data-command="mute">
+                <span class="button-icon">🔇</span>
+                <span class="button-label">Mute</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Volume Control -->
+    <div class="control-section">
+        <h3>Volume</h3>
+        <div class="button-row">
+            <button class="ir-button" data-command="volume_up">
+                <span class="button-icon">🔊</span>
+                <span class="button-label">Volume Up</span>
+            </button>
+            <button class="ir-button" data-command="volume_down">
+                <span class="button-icon">🔉</span>
+                <span class="button-label">Volume Down</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Input Selection -->
+    <div class="control-section">
+        <h3>Input Selection</h3>
+        <div class="button-grid">
+            <button class="ir-button input-button" data-command="input_tuner">
+                <span class="button-icon">📻</span>
+                <span class="button-label">Tuner</span>
+            </button>
+            <button class="ir-button input-button" data-command="input_phono">
+                <span class="button-icon">💿</span>
+                <span class="button-label">Phono</span>
+            </button>
+            <button class="ir-button input-button" data-command="input_cd">
+                <span class="button-icon">💽</span>
+                <span class="button-label">CD</span>
+            </button>
+            <button class="ir-button input-button" data-command="input_direct">
+                <span class="button-icon">🎵</span>
+                <span class="button-label">Direct</span>
+            </button>
+            <button class="ir-button input-button" data-command="input_video1">
+                <span class="button-icon">📺</span>
+                <span class="button-label">Video 1</span>
+            </button>
+            <button class="ir-button input-button" data-command="input_video2">
+                <span class="button-icon">📹</span>
+                <span class="button-label">Video 2</span>
+            </button>
+            <button class="ir-button input-button" data-command="input_tape1">
+                <span class="button-icon">📼</span>
+                <span class="button-label">Tape 1</span>
+            </button>
+            <button class="ir-button input-button" data-command="input_tape2">
+                <span class="button-icon">📼</span>
+                <span class="button-label">Tape 2</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Recent Commands Log -->
+    <div class="control-section">
+        <h3>Recent Commands</h3>
+        <div id="command-log" class="command-log">
+            <div class="log-item">Waiting for commands...</div>
+        </div>
+    </div>
+</div>
+

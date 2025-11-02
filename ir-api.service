@@ -1,0 +1,16 @@
+[Unit]
+Description=IR Remote Control API Server
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/python3 /opt/hifiberry/ir-remote-control/ir_api_server.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+
