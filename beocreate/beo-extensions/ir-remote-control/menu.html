@@ -1,0 +1,98 @@
+<div class="menu-screen large-title" id="ir-remote-control" data-icon="gear.svg" data-menu-title="IR Remote Control" data-namespace="ir_remote_control" data-built-in="0">
+	
+	<header>
+		<div class="back-button master setup"></div>
+		<h1>IR Remote Control</h1>
+	</header>
+	
+	<div class="scroll-area">
+		<div class="menu-content">
+			
+			<h2>Status</h2>
+			
+			<div class="menu-item static">
+				<div class="menu-label">Last Command</div>
+				<div class="menu-value" id="ir-last-command">None</div>
+			</div>
+			
+			<div class="menu-item static">
+				<div class="menu-label">Status</div>
+				<div class="menu-value" id="ir-status">Ready</div>
+			</div>
+			
+			<hr>
+			
+			<h2>Power</h2>
+			
+			<div class="menu-item icon button" onclick="irRemoteControl.sendCommand('power');">
+				<div class="menu-label">⏻ Power</div>
+			</div>
+			
+			<div class="menu-item icon button" onclick="irRemoteControl.sendCommand('mute');">
+				<div class="menu-label">🔇 Mute</div>
+			</div>
+			
+			<hr>
+			
+			<h2>Volume</h2>
+			
+			<div class="menu-item icon button" onclick="irRemoteControl.sendCommand('volume_up');">
+				<div class="menu-label">🔊 Volume Up</div>
+			</div>
+			
+			<div class="menu-item icon button" onclick="irRemoteControl.sendCommand('volume_down');">
+				<div class="menu-label">🔉 Volume Down</div>
+			</div>
+			
+			<hr>
+			
+			<h2>Input Selection</h2>
+			
+			<div class="menu-item icon button" onclick="irRemoteControl.sendCommand('input_tuner');">
+				<div class="menu-label">📻 Tuner</div>
+			</div>
+			
+			<div class="menu-item icon button" onclick="irRemoteControl.sendCommand('input_phono');">
+				<div class="menu-label">💿 Phono</div>
+			</div>
+			
+			<div class="menu-item icon button" onclick="irRemoteControl.sendCommand('input_cd');">
+				<div class="menu-label">💽 CD</div>
+			</div>
+			
+			<div class="menu-item icon button" onclick="irRemoteControl.sendCommand('input_direct');">
+				<div class="menu-label">🎵 Direct</div>
+			</div>
+			
+			<div class="menu-item icon button" onclick="irRemoteControl.sendCommand('input_video1');">
+				<div class="menu-label">📺 Video 1</div>
+			</div>
+			
+			<div class="menu-item icon button" onclick="irRemoteControl.sendCommand('input_video2');">
+				<div class="menu-label">📹 Video 2</div>
+			</div>
+			
+			<div class="menu-item icon button" onclick="irRemoteControl.sendCommand('input_tape1');">
+				<div class="menu-label">📼 Tape 1</div>
+			</div>
+			
+			<div class="menu-item icon button" onclick="irRemoteControl.sendCommand('input_tape2');">
+				<div class="menu-label">📼 Tape 2</div>
+			</div>
+			
+			<hr>
+			
+			<h2>Recent Commands</h2>
+			<div id="ir-command-log" style="font-family: 'Courier New', monospace; font-size: 11px; max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.05); padding: 15px; border-radius: 8px; line-height: 1.5; color: inherit;">
+				<div style="opacity: 0.5;">Waiting for commands...</div>
+			</div>
+			
+			<div id="ir-error" style="display: none; color: #d32f2f; padding: 12px; margin: 15px 0; background: rgba(211,47,47,0.1); border-left: 3px solid #d32f2f; border-radius: 4px; font-size: 13px;">
+			</div>
+			
+		</div>
+	</div>
+	
+</div>
+
+<script type="text/javascript" charset="utf-8" src="€/ir-remote-client.js"></script>
