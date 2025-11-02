@@ -80,6 +80,7 @@ echo "✓ Scripts installed"
 echo ""
 
 echo "Step 4: Installing Beocreate extension..."
+cp beocreate/beo-extensions/ir-remote-control/package.json "$BEOCREATE_EXT_DIR/"
 cp beocreate/beo-extensions/ir-remote-control/index.js "$BEOCREATE_EXT_DIR/"
 cp beocreate/beo-extensions/ir-remote-control/ui.html "$BEOCREATE_EXT_DIR/"
 cp beocreate/beo-extensions/ir-remote-control/ui.js "$BEOCREATE_EXT_DIR/"

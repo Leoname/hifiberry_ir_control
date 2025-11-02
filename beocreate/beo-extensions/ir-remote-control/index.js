@@ -1,17 +1,17 @@
-var extensions = (function() {
-    var extensions = {};
+// IR Remote Control Extension for Beocreate
+// Server-side code (Node.js)
+
+var version = require("./package.json").version;
+
+module.exports = {
+    version: version,
     
-    extensions["ir-remote-control"] = {
-        displayName: "IR Remote Control",
-        description: "Control your audio receiver via infrared remote",
-        version: "1.0.0",
-        hidden: false
-    };
-
-    return extensions;
-})();
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = extensions;
-}
-
+    setup: function(options, imports, register) {
+        var debug = imports.debug;
+        var beo = imports.beo;
+        
+        debug('IR Remote Control extension loaded.');
+        
+        register(null, {});
+    }
+};
