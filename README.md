@@ -45,16 +45,31 @@ IR LED (with current-limiting resistor):
   Cathode (-)───────────────── GND (Physical Pin 9 or 14)
 ```
 
+**⚠️ IMPORTANT: HiFiBerry DAC Compatibility**
+
+If you're using a HiFiBerry DAC (DAC+, DAC2, etc.), **DO NOT use GPIO 18, 19, 20, or 21** for IR transmission! These pins are used by the I2S audio interface and will cause system instability, audio dropouts, or reboots.
+
+**Safe pins for HiFiBerry DAC users:**
+- GPIO 17 (default) ✅
+- GPIO 12, 13 (hardware PWM) ✅
+- GPIO 22, 23, 24, 25, 27 ✅
+
 **Recommended Components:**
 - IR LED (940nm wavelength recommended)
 - 220Ω resistor (current-limiting)
 - Jumper wires
 
 **Alternative GPIO Pins:**
-- GPIO 17 (Pin 11) - recommended
-- GPIO 18 (Pin 12) - hardware PWM capable
+- GPIO 17 (Pin 11) - **recommended for HiFiBerry DACs** ⭐
+- GPIO 12 (Pin 32) - hardware PWM capable
+- GPIO 13 (Pin 33) - hardware PWM capable
 - GPIO 22 (Pin 15)
 - GPIO 23 (Pin 16)
+- GPIO 24 (Pin 18)
+- GPIO 25 (Pin 22)
+
+**⚠️ WARNING - Do NOT use with HiFiBerry DACs:**
+- GPIO 18, 19, 20, 21 - These are used by I2S audio and will cause conflicts/reboots!
 
 ## Installation
 

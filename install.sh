@@ -10,7 +10,7 @@ echo ""
 # Configuration
 INSTALL_DIR="/opt/hifiberry/ir-remote-control"
 BEOCREATE_EXT_DIR="/opt/beocreate/beo-extensions/ir-remote-control"
-GPIO_PIN=17
+GPIO_PIN=17  # Safe for HiFiBerry DACs (GPIO 18-21 are used by I2S audio!)
 
 # Check if running as root
 if [ "$EUID" -ne 0 ]; then 
