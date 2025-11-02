@@ -189,12 +189,14 @@ var irRemoteControl = (function() {
     
 })();
 
-// Auto-start status updates when the page is shown
-if (typeof beo !== 'undefined') {
-    beo.bus.on('general', function(event) {
-        if (event.header === 'activatedExtension' && event.content.extension === 'ir-remote-control') {
-            console.log('IR Remote Control extension activated');
-            irRemoteControl.startStatusUpdates();
-        }
-    });
-}
+// Auto-start when extension is activated
+setTimeout(function() {
+    if (typeof beo !== 'undefined' && beo.bus) {
+        beo.bus.on('general', function(event) {
+            if (event.header === 'activatedExtension' && event.content.extension === 'ir-remote-control') {
+                console.log('IR Remote Control extension activated');
+                irRemoteControl.startStatusUpdates();
+            }
+        });
+    }
+}, 100);
