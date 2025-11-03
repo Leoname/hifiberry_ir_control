@@ -27,8 +27,9 @@ class IRAPIHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        self.send_header('Connection', 'keep-alive')
+        self.send_header('Connection', 'close')  # Changed to close for immediate response
         self.send_header('Cache-Control', 'no-cache')
+        self.send_header('Content-Length', '0')  # Will be overridden when we write
         self.end_headers()
     
     def do_OPTIONS(self):
@@ -167,15 +168,23 @@ class IRAPIHandler(BaseHTTPRequestHandler):
             thread.start()
             
             # Return IMMEDIATE success response (don't wait for command to complete)
-            self._set_headers()
             response = {
                 'success': True,
                 'command': command,
                 'message': 'Command accepted and executing'
             }
+            response_bytes = json.dumps(response).encode()
             
-            self.wfile.write(json.dumps(response).encode())
-            self.wfile.flush()  # Force send immediately
+            # Send response with proper headers
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Content-Length', str(len(response_bytes)))
+            self.send_header('Connection', 'close')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            
+            self.wfile.write(response_bytes)
+            self.wfile.flush()
             
         except Exception as e:
             self._set_headers(500)
