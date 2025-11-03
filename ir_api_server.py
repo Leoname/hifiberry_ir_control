@@ -9,6 +9,7 @@ import subprocess
 import os
 import sys
 import time
+import threading
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import parse_qs, urlparse
 
@@ -108,23 +109,9 @@ class IRAPIHandler(BaseHTTPRequestHandler):
         self._set_headers()
         self.wfile.write(json.dumps(commands).encode())
     
-    def handle_send_command(self):
-        """Send an IR command"""
+    def _execute_command_async(self, command):
+        """Execute IR command in background thread (fire and forget)"""
         try:
-            # Read request body
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length)
-            data = json.loads(post_data.decode())
-            
-            command = data.get('command')
-            if not command:
-                self._set_headers(400)
-                self.wfile.write(json.dumps({
-                    'success': False,
-                    'error': 'No command specified'
-                }).encode())
-                return
-            
             # Execute the IR control script
             result = subprocess.run(
                 ['python3', IR_CONTROL_SCRIPT, '-c', command],
@@ -149,26 +136,46 @@ class IRAPIHandler(BaseHTTPRequestHandler):
             except IOError:
                 # If we can't write status file, continue anyway
                 pass
+                
+        except Exception as e:
+            # Log error but don't crash
+            print(f"[ERROR] Command '{command}' failed: {e}", file=sys.stderr)
+    
+    def handle_send_command(self):
+        """Send an IR command (responds immediately, executes in background)"""
+        try:
+            # Read request body
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data.decode())
             
-            # Return response
+            command = data.get('command')
+            if not command:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({
+                    'success': False,
+                    'error': 'No command specified'
+                }).encode())
+                return
+            
+            # Start command execution in background thread (don't wait!)
+            thread = threading.Thread(
+                target=self._execute_command_async,
+                args=(command,),
+                daemon=True
+            )
+            thread.start()
+            
+            # Return IMMEDIATE success response (don't wait for command to complete)
             self._set_headers()
             response = {
-                'success': success,
+                'success': True,
                 'command': command,
-                'output': result.stdout.decode().strip()
+                'message': 'Command accepted and executing'
             }
-            
-            if not success:
-                response['error'] = result.stderr.decode().strip()
             
             self.wfile.write(json.dumps(response).encode())
             
-        except subprocess.TimeoutExpired:
-            self._set_headers(500)
-            self.wfile.write(json.dumps({
-                'success': False,
-                'error': 'Command timeout'
-            }).encode())
         except Exception as e:
             self._set_headers(500)
             self.wfile.write(json.dumps({
