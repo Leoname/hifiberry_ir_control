@@ -8,7 +8,8 @@ import json
 import subprocess
 import os
 import sys
-from http.server import HTTPServer, BaseHTTPRequestHandler
+import time
+from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import parse_qs, urlparse
 
 # Configuration
@@ -25,6 +26,8 @@ class IRAPIHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.send_header('Connection', 'keep-alive')
+        self.send_header('Cache-Control', 'no-cache')
         self.end_headers()
     
     def do_OPTIONS(self):
@@ -57,20 +60,33 @@ class IRAPIHandler(BaseHTTPRequestHandler):
         """Return current status"""
         try:
             if os.path.exists(STATUS_FILE):
-                with open(STATUS_FILE, 'r') as f:
-                    status = json.load(f)
+                try:
+                    with open(STATUS_FILE, 'r') as f:
+                        status = json.load(f)
+                except (json.JSONDecodeError, IOError):
+                    # If file is corrupted or being written, return default
+                    status = {
+                        'last_command': 'None',
+                        'last_status': 'Ready',
+                        'timestamp': int(time.time())
+                    }
             else:
                 status = {
                     'last_command': 'None',
                     'last_status': 'Ready',
-                    'timestamp': 0
+                    'timestamp': int(time.time())
                 }
             
             self._set_headers()
             self.wfile.write(json.dumps(status).encode())
         except Exception as e:
             self._set_headers(500)
-            self.wfile.write(json.dumps({'error': str(e)}).encode())
+            self.wfile.write(json.dumps({
+                'error': str(e),
+                'last_command': 'None',
+                'last_status': 'Error',
+                'timestamp': int(time.time())
+            }).encode())
     
     def handle_commands_list(self):
         """Return list of available commands"""
@@ -123,12 +139,16 @@ class IRAPIHandler(BaseHTTPRequestHandler):
             status = {
                 'last_command': command,
                 'last_status': 'Success' if success else 'Failed',
-                'timestamp': int(subprocess.check_output(['date', '+%s']).decode().strip())
+                'timestamp': int(time.time())
             }
             
-            os.makedirs(os.path.dirname(STATUS_FILE), exist_ok=True)
-            with open(STATUS_FILE, 'w') as f:
-                json.dump(status, f)
+            try:
+                os.makedirs(os.path.dirname(STATUS_FILE), exist_ok=True)
+                with open(STATUS_FILE, 'w') as f:
+                    json.dump(status, f)
+            except IOError:
+                # If we can't write status file, continue anyway
+                pass
             
             # Return response
             self._set_headers()
@@ -166,11 +186,15 @@ class IRAPIHandler(BaseHTTPRequestHandler):
 def run_server():
     """Start the HTTP server"""
     server_address = ('', API_PORT)
-    httpd = HTTPServer(server_address, IRAPIHandler)
+    # Use ThreadingHTTPServer for concurrent request handling
+    httpd = ThreadingHTTPServer(server_address, IRAPIHandler)
+    httpd.daemon_threads = True  # Allow threads to exit gracefully
+    httpd.timeout = 30  # Socket timeout
     
     print(f"IR Remote Control API Server starting on port {API_PORT}")
     print(f"IR Control Script: {IR_CONTROL_SCRIPT}")
     print(f"Status File: {STATUS_FILE}")
+    print("Using threaded server for concurrent requests")
     print("Ready to receive commands...")
     
     try:

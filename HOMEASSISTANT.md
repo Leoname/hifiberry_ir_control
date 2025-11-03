@@ -682,12 +682,138 @@ curl http://hifiberry.local:8089/api/status
 rest_command:
   ir_receiver_power:
     url: "http://hifiberry.local:8089/api/send"
-    timeout: 10  # Add this line
+    timeout: 10  # Increased from 5
     method: POST
     # ...
 ```
 
 2. **Check HiFiBerry device load** - might be overloaded
+
+### "Empty reply found when expecting JSON data"
+
+This error occurs when the API returns an empty response. Solutions:
+
+1. **Reduce sensor polling frequency:**
+```yaml
+sensor:
+  - platform: rest
+    scan_interval: 60  # Increase from 30
+    timeout: 10  # Increase timeout
+```
+
+2. **Update to improved API server** (v2 with threading support):
+```bash
+# On HiFiBerry device
+cd /tmp
+git clone https://github.com/Leoname/hifiberry_ir_control.git
+cd hifiberry_ir_control
+chmod +x install.sh
+./install.sh
+
+# Restart API service
+systemctl restart ir-api.service
+```
+
+The new API server supports concurrent requests and better error handling.
+
+### "Cannot connect to host" / "Invalid argument"
+
+These SSL-related errors occur even though we're using HTTP. Solutions:
+
+1. **Add `verify_ssl: false` to all REST commands:**
+```yaml
+rest_command:
+  ir_receiver_power:
+    url: "http://hifiberry.local:8089/api/send"
+    method: POST
+    verify_ssl: false  # Add this line
+    timeout: 10
+    # ...
+```
+
+2. **Use IP address instead of hostname:**
+```yaml
+# Replace hifiberry.local with actual IP
+url: "http://192.168.1.100:8089/api/send"
+```
+
+To find your HiFiBerry IP:
+```bash
+# On HiFiBerry device
+hostname -I
+
+# Or from another computer
+ping hifiberry.local
+```
+
+3. **Check network connectivity:**
+```bash
+# From Home Assistant host
+ping hifiberry.local
+curl http://hifiberry.local:8089/api/status
+```
+
+### "Timeout while fetching data"
+
+The REST sensor is timing out. Solutions:
+
+1. **Increase timeout and scan interval:**
+```yaml
+sensor:
+  - platform: rest
+    name: "IR Receiver Status"
+    resource: "http://192.168.1.100:8089/api/status"  # Use IP
+    scan_interval: 60  # Poll less frequently
+    timeout: 10  # Longer timeout
+    force_update: false  # Only update on changes
+```
+
+2. **Add availability template:**
+```yaml
+sensor:
+  - platform: rest
+    # ... other settings ...
+    availability_template: "{{ value_json is defined }}"
+```
+
+3. **Consider disabling the sensor if not needed:**
+   - Comment out the entire sensor section if you don't need status monitoring
+   - Commands will still work without the sensor
+
+### Recommended Complete Fix
+
+Update your Home Assistant configuration with these improvements:
+
+```yaml
+# Improved REST commands with better error handling
+rest_command:
+  ir_receiver_power:
+    url: "http://192.168.1.100:8089/api/send"  # Use IP instead of hostname
+    method: POST
+    headers:
+      Content-Type: application/json
+    payload: '{"command":"power"}'
+    timeout: 10  # Increased timeout
+    verify_ssl: false  # Disable SSL verification
+    
+# Improved status sensor with less aggressive polling
+sensor:
+  - platform: rest
+    name: "IR Receiver Status"
+    resource: "http://192.168.1.100:8089/api/status"
+    method: GET
+    scan_interval: 60  # Reduced from 30
+    timeout: 10  # Increased timeout
+    force_update: false  # Only update when value changes
+    json_attributes:
+      - last_command
+      - last_status
+      - timestamp
+    value_template: "{{ value_json.last_status | default('Unknown') }}"
+    availability_template: "{{ value_json is defined and value_json.last_status is defined }}"
+```
+
+**Note:** Replace `192.168.1.100` with your actual HiFiBerry IP address.
 
 ## Voice Control (Alexa/Google Assistant)
 

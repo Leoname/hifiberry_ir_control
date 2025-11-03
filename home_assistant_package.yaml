@@ -38,7 +38,8 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"power"}'
-    timeout: 5
+    timeout: 10  # Increased timeout
+    verify_ssl: false  # Disable SSL verification (we use HTTP)
     
   ir_receiver_mute:
     url: "http://hifiberry.local:8089/api/send"
@@ -46,7 +47,8 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"mute"}'
-    timeout: 5
+    timeout: 10
+    verify_ssl: false
     
   # Volume Control
   ir_receiver_volume_up:
@@ -55,7 +57,8 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"volume_up"}'
-    timeout: 5
+    timeout: 10
+    verify_ssl: false
     
   ir_receiver_volume_down:
     url: "http://hifiberry.local:8089/api/send"
@@ -63,7 +66,8 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"volume_down"}'
-    timeout: 5
+    timeout: 10
+    verify_ssl: false
     
   # Input Selection
   ir_receiver_input_tuner:
@@ -72,7 +76,8 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"input_tuner"}'
-    timeout: 5
+    timeout: 10
+    verify_ssl: false
     
   ir_receiver_input_phono:
     url: "http://hifiberry.local:8089/api/send"
@@ -80,7 +85,8 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"input_phono"}'
-    timeout: 5
+    timeout: 10
+    verify_ssl: false
     
   ir_receiver_input_cd:
     url: "http://hifiberry.local:8089/api/send"
@@ -88,7 +94,8 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"input_cd"}'
-    timeout: 5
+    timeout: 10
+    verify_ssl: false
     
   ir_receiver_input_direct:
     url: "http://hifiberry.local:8089/api/send"
@@ -96,7 +103,8 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"input_direct"}'
-    timeout: 5
+    timeout: 10
+    verify_ssl: false
     
   ir_receiver_input_video1:
     url: "http://hifiberry.local:8089/api/send"
@@ -104,7 +112,8 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"input_video1"}'
-    timeout: 5
+    timeout: 10
+    verify_ssl: false
     
   ir_receiver_input_video2:
     url: "http://hifiberry.local:8089/api/send"
@@ -112,7 +121,8 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"input_video2"}'
-    timeout: 5
+    timeout: 10
+    verify_ssl: false
     
   ir_receiver_input_tape1:
     url: "http://hifiberry.local:8089/api/send"
@@ -120,7 +130,8 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"input_tape1"}'
-    timeout: 5
+    timeout: 10
+    verify_ssl: false
     
   ir_receiver_input_tape2:
     url: "http://hifiberry.local:8089/api/send"
@@ -128,7 +139,8 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"input_tape2"}'
-    timeout: 5
+    timeout: 10
+    verify_ssl: false
 
 # Status Sensor - Monitor last command
 sensor:
@@ -136,13 +148,16 @@ sensor:
     name: "IR Receiver Status"
     resource: "http://hifiberry.local:8089/api/status"
     method: GET
-    scan_interval: 30
-    timeout: 5
+    scan_interval: 60  # Reduced from 30 to avoid overwhelming API
+    timeout: 10  # Increased timeout for reliability
+    force_update: false  # Only update when value changes
     json_attributes:
       - last_command
       - last_status
       - timestamp
-    value_template: "{{ value_json.last_status }}"
+    value_template: "{{ value_json.last_status | default('Unknown') }}"
+    # Gracefully handle errors
+    availability_template: "{{ value_json is defined and value_json.last_status is defined }}"
 
 # Input Select - Dropdown for source selection
 input_select:
