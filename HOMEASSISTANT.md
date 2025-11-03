@@ -10,6 +10,8 @@ The IR Remote Control API runs on port 8089 and provides REST endpoints that can
 - **Scripts** - Create command sequences (macros)
 - **Automations** - Trigger based on events
 
+**Note:** The API responds instantly (< 100ms) using background threading, so you won't experience timeout issues. The API returns immediately while commands execute in the background.
+
 ## Quick Start
 
 Add the following to your Home Assistant configuration:
