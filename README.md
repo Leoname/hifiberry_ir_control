@@ -193,6 +193,53 @@ Response:
 }
 ```
 
+## Home Assistant Integration
+
+Control your receiver directly from Home Assistant! The REST API endpoints can be easily integrated using REST commands.
+
+### Quick Setup
+
+Add to your `configuration.yaml`:
+
+```yaml
+rest_command:
+  ir_receiver_power:
+    url: "http://hifiberry.local:8089/api/send"
+    method: POST
+    headers:
+      Content-Type: application/json
+    payload: '{"command":"power"}'
+```
+
+Then call from automations, scripts, or dashboard buttons:
+
+```yaml
+# In an automation
+service: rest_command.ir_receiver_power
+
+# Dashboard button
+type: button
+name: Power
+tap_action:
+  action: call-service
+  service: rest_command.ir_receiver_power
+```
+
+### Complete Package
+
+For a full-featured integration with buttons, sensors, input selectors, and automations:
+
+1. Copy `home_assistant_package.yaml` to your Home Assistant `packages/` directory
+2. Replace `hifiberry.local` with your device's IP or hostname
+3. Restart Home Assistant
+
+See [HOMEASSISTANT.md](HOMEASSISTANT.md) for:
+- Complete REST command configurations
+- Dashboard card examples
+- Automation examples (auto power on/off, input switching)
+- Voice control setup (Alexa/Google Assistant)
+- Advanced features (macros, input selectors)
+
 ## Service Management
 
 ### Using systemd:

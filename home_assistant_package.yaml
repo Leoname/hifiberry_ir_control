@@ -1,0 +1,314 @@
+# Home Assistant Package for HiFiBerry IR Remote Control
+# 
+# Installation:
+# 1. Enable packages in configuration.yaml:
+#    homeassistant:
+#      packages: !include_dir_named packages
+# 
+# 2. Create packages directory in your Home Assistant config folder
+# 3. Copy this file to: config/packages/ir_receiver.yaml
+# 4. Replace "hifiberry.local" with your HiFiBerry device's IP or hostname
+# 5. Restart Home Assistant
+#
+# Usage:
+# - Call services: rest_command.ir_receiver_power, etc.
+# - Use in automations and scripts
+# - Monitor with sensor.ir_receiver_status
+# - Add dashboard cards from HOMEASSISTANT.md
+
+# Customization
+homeassistant:
+  customize:
+    sensor.ir_receiver_status:
+      friendly_name: "Audio Receiver Status"
+      icon: mdi:remote
+    script.ir_receiver_power_on_cd:
+      friendly_name: "Power On + CD"
+      icon: mdi:disc
+    script.ir_receiver_power_on_phono:
+      friendly_name: "Power On + Phono"
+      icon: mdi:album
+
+# REST Commands - Send IR commands to HiFiBerry
+rest_command:
+  # Power Control
+  ir_receiver_power:
+    url: "http://hifiberry.local:8089/api/send"
+    method: POST
+    headers:
+      Content-Type: application/json
+    payload: '{"command":"power"}'
+    timeout: 5
+    
+  ir_receiver_mute:
+    url: "http://hifiberry.local:8089/api/send"
+    method: POST
+    headers:
+      Content-Type: application/json
+    payload: '{"command":"mute"}'
+    timeout: 5
+    
+  # Volume Control
+  ir_receiver_volume_up:
+    url: "http://hifiberry.local:8089/api/send"
+    method: POST
+    headers:
+      Content-Type: application/json
+    payload: '{"command":"volume_up"}'
+    timeout: 5
+    
+  ir_receiver_volume_down:
+    url: "http://hifiberry.local:8089/api/send"
+    method: POST
+    headers:
+      Content-Type: application/json
+    payload: '{"command":"volume_down"}'
+    timeout: 5
+    
+  # Input Selection
+  ir_receiver_input_tuner:
+    url: "http://hifiberry.local:8089/api/send"
+    method: POST
+    headers:
+      Content-Type: application/json
+    payload: '{"command":"input_tuner"}'
+    timeout: 5
+    
+  ir_receiver_input_phono:
+    url: "http://hifiberry.local:8089/api/send"
+    method: POST
+    headers:
+      Content-Type: application/json
+    payload: '{"command":"input_phono"}'
+    timeout: 5
+    
+  ir_receiver_input_cd:
+    url: "http://hifiberry.local:8089/api/send"
+    method: POST
+    headers:
+      Content-Type: application/json
+    payload: '{"command":"input_cd"}'
+    timeout: 5
+    
+  ir_receiver_input_direct:
+    url: "http://hifiberry.local:8089/api/send"
+    method: POST
+    headers:
+      Content-Type: application/json
+    payload: '{"command":"input_direct"}'
+    timeout: 5
+    
+  ir_receiver_input_video1:
+    url: "http://hifiberry.local:8089/api/send"
+    method: POST
+    headers:
+      Content-Type: application/json
+    payload: '{"command":"input_video1"}'
+    timeout: 5
+    
+  ir_receiver_input_video2:
+    url: "http://hifiberry.local:8089/api/send"
+    method: POST
+    headers:
+      Content-Type: application/json
+    payload: '{"command":"input_video2"}'
+    timeout: 5
+    
+  ir_receiver_input_tape1:
+    url: "http://hifiberry.local:8089/api/send"
+    method: POST
+    headers:
+      Content-Type: application/json
+    payload: '{"command":"input_tape1"}'
+    timeout: 5
+    
+  ir_receiver_input_tape2:
+    url: "http://hifiberry.local:8089/api/send"
+    method: POST
+    headers:
+      Content-Type: application/json
+    payload: '{"command":"input_tape2"}'
+    timeout: 5
+
+# Status Sensor - Monitor last command
+sensor:
+  - platform: rest
+    name: "IR Receiver Status"
+    resource: "http://hifiberry.local:8089/api/status"
+    method: GET
+    scan_interval: 30
+    timeout: 5
+    json_attributes:
+      - last_command
+      - last_status
+      - timestamp
+    value_template: "{{ value_json.last_status }}"
+
+# Input Select - Dropdown for source selection
+input_select:
+  ir_receiver_input:
+    name: Audio Receiver Input
+    options:
+      - Tuner
+      - Phono
+      - CD
+      - Direct
+      - Video 1
+      - Video 2
+      - Tape 1
+      - Tape 2
+    icon: mdi:import
+
+# Scripts - Macros and command sequences
+script:
+  # Power on and switch to CD
+  ir_receiver_power_on_cd:
+    alias: "Receiver: Power On + CD"
+    icon: mdi:disc
+    sequence:
+      - service: rest_command.ir_receiver_power
+      - delay:
+          seconds: 2
+      - service: rest_command.ir_receiver_input_cd
+      
+  # Power on and switch to Phono
+  ir_receiver_power_on_phono:
+    alias: "Receiver: Power On + Phono"
+    icon: mdi:album
+    sequence:
+      - service: rest_command.ir_receiver_power
+      - delay:
+          seconds: 2
+      - service: rest_command.ir_receiver_input_phono
+      
+  # Power on and switch to Tuner
+  ir_receiver_power_on_tuner:
+    alias: "Receiver: Power On + Tuner"
+    icon: mdi:radio
+    sequence:
+      - service: rest_command.ir_receiver_power
+      - delay:
+          seconds: 2
+      - service: rest_command.ir_receiver_input_tuner
+      
+  # Volume up multiple times
+  ir_receiver_volume_up_3x:
+    alias: "Receiver: Volume Up 3x"
+    icon: mdi:volume-plus
+    sequence:
+      - repeat:
+          count: 3
+          sequence:
+            - service: rest_command.ir_receiver_volume_up
+            - delay:
+                milliseconds: 500
+      
+  # Volume down multiple times
+  ir_receiver_volume_down_3x:
+    alias: "Receiver: Volume Down 3x"
+    icon: mdi:volume-minus
+    sequence:
+      - repeat:
+          count: 3
+          sequence:
+            - service: rest_command.ir_receiver_volume_down
+            - delay:
+                milliseconds: 500
+
+# Automation - Input select changes trigger IR command
+automation:
+  - id: ir_receiver_input_switch
+    alias: "IR Receiver Input Switch"
+    description: "Send IR command when input selector changes"
+    trigger:
+      - platform: state
+        entity_id: input_select.ir_receiver_input
+    action:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_select.ir_receiver_input
+                state: "Tuner"
+            sequence:
+              - service: rest_command.ir_receiver_input_tuner
+          - conditions:
+              - condition: state
+                entity_id: input_select.ir_receiver_input
+                state: "Phono"
+            sequence:
+              - service: rest_command.ir_receiver_input_phono
+          - conditions:
+              - condition: state
+                entity_id: input_select.ir_receiver_input
+                state: "CD"
+            sequence:
+              - service: rest_command.ir_receiver_input_cd
+          - conditions:
+              - condition: state
+                entity_id: input_select.ir_receiver_input
+                state: "Direct"
+            sequence:
+              - service: rest_command.ir_receiver_input_direct
+          - conditions:
+              - condition: state
+                entity_id: input_select.ir_receiver_input
+                state: "Video 1"
+            sequence:
+              - service: rest_command.ir_receiver_input_video1
+          - conditions:
+              - condition: state
+                entity_id: input_select.ir_receiver_input
+                state: "Video 2"
+            sequence:
+              - service: rest_command.ir_receiver_input_video2
+          - conditions:
+              - condition: state
+                entity_id: input_select.ir_receiver_input
+                state: "Tape 1"
+            sequence:
+              - service: rest_command.ir_receiver_input_tape1
+          - conditions:
+              - condition: state
+                entity_id: input_select.ir_receiver_input
+                state: "Tape 2"
+            sequence:
+              - service: rest_command.ir_receiver_input_tape2
+
+# Example Automations (commented out - uncomment and customize as needed)
+
+# Auto power on when music starts playing
+#  - id: ir_receiver_auto_power_on
+#    alias: "IR Receiver Auto Power On"
+#    trigger:
+#      - platform: state
+#        entity_id: media_player.your_media_player
+#        to: "playing"
+#    action:
+#      - service: rest_command.ir_receiver_power
+#      - delay:
+#          seconds: 2
+#      - service: rest_command.ir_receiver_input_direct
+
+# Auto power off at night if music is not playing
+#  - id: ir_receiver_auto_power_off
+#    alias: "IR Receiver Auto Power Off"
+#    trigger:
+#      - platform: time
+#        at: "23:00:00"
+#    condition:
+#      - condition: state
+#        entity_id: media_player.your_media_player
+#        state: "idle"
+#    action:
+#      - service: rest_command.ir_receiver_power
+
+# Auto switch to phono when turntable power is detected
+#  - id: ir_receiver_turntable_switch
+#    alias: "IR Receiver Auto Switch to Phono"
+#    trigger:
+#      - platform: state
+#        entity_id: switch.turntable_power
+#        to: "on"
+#    action:
+#      - service: rest_command.ir_receiver_input_phono
+
