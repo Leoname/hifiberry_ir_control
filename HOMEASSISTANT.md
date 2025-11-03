@@ -682,7 +682,7 @@ curl http://hifiberry.local:8089/api/status
 rest_command:
   ir_receiver_power:
     url: "http://hifiberry.local:8089/api/send"
-    timeout: 10  # Increased from 5
+    timeout: 15  # Increased for slower networks
     method: POST
     # ...
 ```
@@ -697,8 +697,8 @@ This error occurs when the API returns an empty response. Solutions:
 ```yaml
 sensor:
   - platform: rest
-    scan_interval: 60  # Increase from 30
-    timeout: 10  # Increase timeout
+    scan_interval: 120  # Increase to 2 minutes
+    timeout: 15  # Increase timeout
 ```
 
 2. **Update to improved API server** (v2 with threading support):
@@ -727,7 +727,7 @@ rest_command:
     url: "http://hifiberry.local:8089/api/send"
     method: POST
     verify_ssl: false  # Add this line
-    timeout: 10
+    timeout: 15  # Increased timeout
     # ...
 ```
 
@@ -763,8 +763,8 @@ sensor:
   - platform: rest
     name: "IR Receiver Status"
     resource: "http://192.168.1.100:8089/api/status"  # Use IP
-    scan_interval: 60  # Poll less frequently
-    timeout: 10  # Longer timeout
+    scan_interval: 120  # Poll every 2 minutes
+    timeout: 15  # Longer timeout
     force_update: false  # Only update on changes
 ```
 
@@ -773,8 +773,10 @@ sensor:
 sensor:
   - platform: rest
     # ... other settings ...
-    availability_template: "{{ value_json is defined }}"
+    # Note: availability_template not supported in all HA versions
 ```
+
+**Note:** The `availability_template` option is not available in all Home Assistant versions and may cause configuration errors. Use the `default()` filter in `value_template` instead for error handling.
 
 3. **Consider disabling the sensor if not needed:**
    - Comment out the entire sensor section if you don't need status monitoring
@@ -793,7 +795,7 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"power"}'
-    timeout: 10  # Increased timeout
+    timeout: 15  # Increased timeout for slower networks
     verify_ssl: false  # Disable SSL verification
     
 # Improved status sensor with less aggressive polling
@@ -802,15 +804,15 @@ sensor:
     name: "IR Receiver Status"
     resource: "http://192.168.1.100:8089/api/status"
     method: GET
-    scan_interval: 60  # Reduced from 30
-    timeout: 10  # Increased timeout
+    scan_interval: 120  # Poll every 2 minutes (reduced from 60)
+    timeout: 15  # Increased timeout
     force_update: false  # Only update when value changes
     json_attributes:
       - last_command
       - last_status
       - timestamp
     value_template: "{{ value_json.last_status | default('Unknown') }}"
-    availability_template: "{{ value_json is defined and value_json.last_status is defined }}"
+    # Note: availability_template not supported in all HA versions, use default() instead
 ```
 
 **Note:** Replace `192.168.1.100` with your actual HiFiBerry IP address.

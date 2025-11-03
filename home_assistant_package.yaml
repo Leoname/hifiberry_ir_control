@@ -38,7 +38,7 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"power"}'
-    timeout: 10  # Increased timeout
+    timeout: 15  # Increased timeout for slower networks
     verify_ssl: false  # Disable SSL verification (we use HTTP)
     
   ir_receiver_mute:
@@ -47,7 +47,7 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"mute"}'
-    timeout: 10
+    timeout: 15
     verify_ssl: false
     
   # Volume Control
@@ -57,7 +57,7 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"volume_up"}'
-    timeout: 10
+    timeout: 15
     verify_ssl: false
     
   ir_receiver_volume_down:
@@ -66,7 +66,7 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"volume_down"}'
-    timeout: 10
+    timeout: 15
     verify_ssl: false
     
   # Input Selection
@@ -76,7 +76,7 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"input_tuner"}'
-    timeout: 10
+    timeout: 15
     verify_ssl: false
     
   ir_receiver_input_phono:
@@ -85,7 +85,7 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"input_phono"}'
-    timeout: 10
+    timeout: 15
     verify_ssl: false
     
   ir_receiver_input_cd:
@@ -94,7 +94,7 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"input_cd"}'
-    timeout: 10
+    timeout: 15
     verify_ssl: false
     
   ir_receiver_input_direct:
@@ -103,7 +103,7 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"input_direct"}'
-    timeout: 10
+    timeout: 15
     verify_ssl: false
     
   ir_receiver_input_video1:
@@ -112,7 +112,7 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"input_video1"}'
-    timeout: 10
+    timeout: 15
     verify_ssl: false
     
   ir_receiver_input_video2:
@@ -121,7 +121,7 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"input_video2"}'
-    timeout: 10
+    timeout: 15
     verify_ssl: false
     
   ir_receiver_input_tape1:
@@ -130,7 +130,7 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"input_tape1"}'
-    timeout: 10
+    timeout: 15
     verify_ssl: false
     
   ir_receiver_input_tape2:
@@ -139,7 +139,7 @@ rest_command:
     headers:
       Content-Type: application/json
     payload: '{"command":"input_tape2"}'
-    timeout: 10
+    timeout: 15
     verify_ssl: false
 
 # Status Sensor - Monitor last command
@@ -148,16 +148,15 @@ sensor:
     name: "IR Receiver Status"
     resource: "http://hifiberry.local:8089/api/status"
     method: GET
-    scan_interval: 60  # Reduced from 30 to avoid overwhelming API
-    timeout: 10  # Increased timeout for reliability
+    scan_interval: 120  # Increased to 2 minutes to reduce load
+    timeout: 15  # Increased timeout
     force_update: false  # Only update when value changes
     json_attributes:
       - last_command
       - last_status
       - timestamp
     value_template: "{{ value_json.last_status | default('Unknown') }}"
-    # Gracefully handle errors
-    availability_template: "{{ value_json is defined and value_json.last_status is defined }}"
+    # Note: availability_template not supported in all HA versions, removed
 
 # Input Select - Dropdown for source selection
 input_select:
