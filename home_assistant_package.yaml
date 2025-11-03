@@ -10,11 +10,20 @@
 # 4. Replace "hifiberry.local" with your HiFiBerry device's IP or hostname
 # 5. Restart Home Assistant
 #
+# To suppress timeout warnings (if commands work but log errors):
+# Add to configuration.yaml:
+#   logger:
+#     logs:
+#       homeassistant.components.rest_command: error
+#       homeassistant.components.websocket_api: error
+#
 # Usage:
 # - Call services: rest_command.ir_receiver_power, etc.
-# - Use in automations and scripts
+# - Use scripts: script.ir_power, script.ir_mute (with error suppression)
 # - Monitor with sensor.ir_receiver_status
 # - Add dashboard cards from HOMEASSISTANT.md
+# 
+# See HA_SUPPRESS_WARNINGS.md for detailed info on suppressing timeout logs
 
 # Customization
 homeassistant:
@@ -228,6 +237,56 @@ script:
             - service: rest_command.ir_receiver_volume_down
             - delay:
                 milliseconds: 500
+  
+  # Silent versions (suppress timeout errors) - Use these in automations
+  ir_power:
+    alias: "IR: Power (Silent)"
+    mode: queued
+    sequence:
+      - service: rest_command.ir_receiver_power
+        continue_on_error: true
+        
+  ir_mute:
+    alias: "IR: Mute (Silent)"
+    mode: queued
+    sequence:
+      - service: rest_command.ir_receiver_mute
+        continue_on_error: true
+        
+  ir_volume_up:
+    alias: "IR: Volume Up (Silent)"
+    mode: queued
+    sequence:
+      - service: rest_command.ir_receiver_volume_up
+        continue_on_error: true
+        
+  ir_volume_down:
+    alias: "IR: Volume Down (Silent)"
+    mode: queued
+    sequence:
+      - service: rest_command.ir_receiver_volume_down
+        continue_on_error: true
+        
+  ir_input_phono:
+    alias: "IR: Phono (Silent)"
+    mode: queued
+    sequence:
+      - service: rest_command.ir_receiver_input_phono
+        continue_on_error: true
+        
+  ir_input_cd:
+    alias: "IR: CD (Silent)"
+    mode: queued
+    sequence:
+      - service: rest_command.ir_receiver_input_cd
+        continue_on_error: true
+        
+  ir_input_tuner:
+    alias: "IR: Tuner (Silent)"
+    mode: queued
+    sequence:
+      - service: rest_command.ir_receiver_input_tuner
+        continue_on_error: true
 
 # Automation - Input select changes trigger IR command
 automation:
