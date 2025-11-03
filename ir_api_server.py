@@ -175,6 +175,7 @@ class IRAPIHandler(BaseHTTPRequestHandler):
             }
             
             self.wfile.write(json.dumps(response).encode())
+            self.wfile.flush()  # Force send immediately
             
         except Exception as e:
             self._set_headers(500)
