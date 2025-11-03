@@ -24,7 +24,16 @@ ls -la /opt/beocreate/beo-extensions/ir-remote-control/
 
 # View service logs
 journalctl -u ir-api.service -f    # or: tail -f /var/log/ir-api.log
+
+# Check API server version (should show "threaded server" for v2+)
+journalctl -u ir-api.service -n 5 | grep -i "threaded\|starting"
 ```
+
+**For Home Assistant issues**, see [HOMEASSISTANT.md](HOMEASSISTANT.md#troubleshooting) for specific troubleshooting steps including:
+- Empty reply errors
+- SSL connection errors
+- Timeout issues
+- Recommended configuration settings
 
 ## Problem Categories
 
@@ -470,6 +479,18 @@ systemctl restart ir-api.service
 
 3. **Reduce logging verbosity:**
    - Edit `ir_api_server.py` and reduce debug output
+
+4. **Verify threading support:**
+```bash
+# Check if using ThreadingHTTPServer (v2+)
+grep -i "ThreadingHTTPServer\|threaded server" /opt/hifiberry/ir-remote-control/ir_api_server.py
+
+# If not found, update to latest version
+cd /tmp && git clone https://github.com/Leoname/hifiberry_ir_control.git
+cd hifiberry_ir_control && chmod +x install.sh && ./install.sh
+```
+
+**Note:** The API server uses `ThreadingHTTPServer` (v2+) to handle concurrent requests from Home Assistant, web interface, and other clients simultaneously without blocking.
 
 ### 5. Read-Only Filesystem Issues
 

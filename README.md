@@ -239,6 +239,9 @@ See [HOMEASSISTANT.md](HOMEASSISTANT.md) for:
 - Automation examples (auto power on/off, input switching)
 - Voice control setup (Alexa/Google Assistant)
 - Advanced features (macros, input selectors)
+- Troubleshooting for connection issues and timeouts
+
+**Note**: The API server uses threading to handle concurrent requests reliably, ensuring smooth operation when Home Assistant polls for status while sending commands.
 
 ## Service Management
 
@@ -414,9 +417,13 @@ See [audiocontrol2_integration/README_AUDIOCONTROL2.md](audiocontrol2_integratio
 ### How It Works
 
 1. **IR Transmission**: Uses `ir-ctl` command with kernel `gpio-ir-tx` driver
-2. **API Server**: Python HTTP server provides REST API for web interface
+2. **API Server**: Python threaded HTTP server provides REST API for web interface and Home Assistant
+   - Supports concurrent requests from multiple clients
+   - Robust error handling and graceful degradation
+   - Keep-alive connections for reliability
 3. **Web Interface**: Beocreate extension polls API and sends commands
-4. **Status Updates**: Current status written to JSON file for persistence
+4. **Home Assistant Integration**: REST commands and sensors for automation
+5. **Status Updates**: Current status written to JSON file for persistence
 
 ## Contributing
 
